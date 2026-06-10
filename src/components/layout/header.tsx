@@ -1,0 +1,108 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+
+export default function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsLoggedIn(!!user);
+    });
+  }, []);
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-zinc-800/50 bg-black/60 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="text-xl font-bold">
+          <span className="bg-gradient-to-r from-violet-400 to-purple-500 bg-clip-text text-transparent">
+            PixelAI
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          <Link href="/create/image" className="text-sm text-zinc-400 hover:text-white transition-colors">
+            Ferramentas
+          </Link>
+          <Link href="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
+            Preços
+          </Link>
+        </nav>
+
+        <div className="hidden items-center gap-3 md:flex">
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 transition-colors"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="rounded-lg px-4 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+              >
+                Entrar
+              </Link>
+              <Link
+                href="/auth/register"
+                className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 transition-colors"
+              >
+                Começar Grátis
+              </Link>
+            </>
+          )}
+        </div>
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden text-zinc-400 hover:text-white"
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {menuOpen && (
+        <div className="border-t border-zinc-800 bg-black/90 backdrop-blur-xl md:hidden">
+          <div className="flex flex-col gap-2 p-4">
+            <Link href="/create/image" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
+              Ferramentas
+            </Link>
+            <Link href="/pricing" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
+              Preços
+            </Link>
+            <hr className="border-zinc-800" />
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg bg-violet-600 px-3 py-2 text-center text-sm font-medium text-white"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/login" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
+                  Entrar
+                </Link>
+                <Link
+                  href="/auth/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg bg-violet-600 px-3 py-2 text-center text-sm font-medium text-white"
+                >
+                  Começar Grátis
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
