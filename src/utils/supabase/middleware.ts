@@ -40,7 +40,7 @@ export const updateSession = async (request: NextRequest) => {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const protectedPaths = ["/dashboard", "/create", "/gallery"];
+  const protectedPaths = ["/dashboard", "/create", "/gallery", "/pricing"];
   const authPaths = ["/auth/login", "/auth/register"];
 
   // Redirect authenticated users away from auth pages

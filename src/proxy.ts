@@ -10,6 +10,7 @@ export const config = {
     "/dashboard/:path*",
     "/create/:path*",
     "/gallery/:path*",
+    "/pricing/:path*",
     "/auth/:path*",
   ],
 };

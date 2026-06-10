@@ -24,7 +24,7 @@ export default function TermosPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold text-white">3. Conta e Cadastro</h2>
-              <p>Para utilizar os serviços, é necessário criar uma conta gratuita. Você é responsável por manter a segurança das suas credenciais de acesso. Ao se cadastrar, você recebe 5 créditos gratuitos de boas-vindas.</p>
+              <p>Para utilizar os serviços, é necessário criar uma conta gratuita. Você é responsável por manter a segurança das suas credenciais de acesso. Ao se cadastrar, você recebe créditos gratuitos de boas-vindas para testar a plataforma.</p>
             </section>
 
             <section>

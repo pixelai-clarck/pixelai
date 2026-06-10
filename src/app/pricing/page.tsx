@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { Check, Zap, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const plans = [
   {
@@ -15,7 +17,7 @@ const plans = [
     priceNum: 0,
     desc: "Para experimentar a plataforma",
     features: [
-      "5 créditos de boas-vindas",
+      "Créditos de boas-vindas",
       "Acesso a todas as ferramentas",
       "Download em alta qualidade",
     ],
@@ -120,6 +122,27 @@ const faqs = [
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.push("/auth/register");
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

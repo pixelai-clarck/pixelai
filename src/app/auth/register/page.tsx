@@ -101,7 +101,7 @@ export default function RegisterPage() {
             Pixel<span className="text-violet-500">AI</span>
           </h1>
           <p className="mt-2 text-sm text-zinc-400">
-            Crie sua conta grátis e ganhe 5 créditos
+            Crie sua conta grátis e comece a gerar
           </p>
         </div>
 
