@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { LocaleProvider } from "@/lib/locale-context";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,7 +11,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "PixelAI — Crie Influenciadores Digitais com IA",
   description:
-    "Crie fotos, vídeos e vozes de influenciadores digitais com inteligência artificial. Sem estúdio, sem modelos, sem complicação. A partir de R$19.",
+    "Crie fotos, vídeos e vozes de influenciadores digitais com inteligência artificial. Sem estúdio, sem modelos, sem complicação.",
   keywords: [
     "IA",
     "influenciador digital",
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     "inteligência artificial",
     "UGC",
     "marketing digital",
+    "AI influencer",
   ],
 };
 
@@ -29,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full antialiased dark`}>
       <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
-        {children}
+        <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
   );

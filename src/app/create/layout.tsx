@@ -15,6 +15,7 @@ import {
   Move,
   Images,
   BookOpen,
+  DollarSign,
   LogOut,
   Coins,
   Menu,
@@ -31,6 +32,7 @@ const navItems = [
   { label: "Motion Transfer", href: "/create/motion", icon: Move },
   { label: "Galeria", href: "/gallery", icon: Images },
   { label: "Templates", href: "/dashboard/templates", icon: BookOpen },
+  { label: "Monetizar", href: "/dashboard/monetizar", icon: DollarSign },
 ];
 
 export default function CreateLayout({ children }: { children: React.ReactNode }) {
