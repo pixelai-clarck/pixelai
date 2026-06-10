@@ -1,13 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, Globe, ChevronDown } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+
+const languages = [
+  { code: "pt", label: "Português", flag: "🇧🇷" },
+  { code: "en", label: "English", flag: "🇺🇸" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+];
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("pt");
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -15,6 +24,18 @@ export default function Header() {
       setIsLoggedIn(!!user);
     });
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const activeLang = languages.find((l) => l.code === currentLang) || languages[0];
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800/50 bg-black/60 backdrop-blur-xl">
@@ -29,12 +50,42 @@ export default function Header() {
           <Link href="/create/image" className="text-sm text-zinc-400 hover:text-white transition-colors">
             Ferramentas
           </Link>
-          <Link href="/pricing" className="text-sm text-zinc-400 hover:text-white transition-colors">
-            Preços
-          </Link>
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          {/* Language selector */}
+          <div className="relative" ref={langRef}>
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <Globe className="h-4 w-4" />
+              <span>{activeLang.flag}</span>
+              <ChevronDown className="h-3 w-3" />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 top-full mt-2 w-40 rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-xl">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setCurrentLang(lang.code);
+                      setLangOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors cursor-pointer ${
+                      currentLang === lang.code
+                        ? "text-violet-400 bg-violet-600/10"
+                        : "text-zinc-400 hover:text-white hover:bg-zinc-800"
+                    }`}
+                  >
+                    <span>{lang.flag}</span>
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {isLoggedIn ? (
             <Link
               href="/dashboard"
@@ -71,11 +122,24 @@ export default function Header() {
       {menuOpen && (
         <div className="border-t border-zinc-800 bg-black/90 backdrop-blur-xl md:hidden">
           <div className="flex flex-col gap-2 p-4">
+            {/* Mobile language */}
+            <div className="flex gap-2 mb-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setCurrentLang(lang.code)}
+                  className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm cursor-pointer ${
+                    currentLang === lang.code
+                      ? "bg-violet-600/20 text-violet-400"
+                      : "text-zinc-400 hover:bg-zinc-800"
+                  }`}
+                >
+                  {lang.flag} {lang.code.toUpperCase()}
+                </button>
+              ))}
+            </div>
             <Link href="/create/image" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
               Ferramentas
-            </Link>
-            <Link href="/pricing" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
-              Preços
             </Link>
             <hr className="border-zinc-800" />
             {isLoggedIn ? (

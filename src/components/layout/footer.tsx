@@ -11,8 +11,8 @@ export default function Footer() {
             </span>
           </Link>
           <div className="flex gap-6 text-sm text-zinc-500">
-            <span className="hover:text-zinc-300 transition-colors cursor-default">Termos</span>
-            <span className="hover:text-zinc-300 transition-colors cursor-default">Privacidade</span>
+            <Link href="/termos" className="hover:text-zinc-300 transition-colors">Termos de Uso</Link>
+            <Link href="/privacidade" className="hover:text-zinc-300 transition-colors">Privacidade</Link>
             <a href="mailto:contato@pixelai.com" className="hover:text-zinc-300 transition-colors">Contato</a>
           </div>
           <p className="text-sm text-zinc-600">&copy; 2026 PixelAI</p>

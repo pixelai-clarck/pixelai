@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { useState } from "react";
 import {
   ImagePlus,
   Video,
@@ -12,39 +15,61 @@ import {
   Download,
   Sparkles,
   ArrowRight,
-  Check,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
+  TrendingUp,
+  Wand2,
+  Users,
+  Shield,
+  Clock,
 } from "lucide-react";
 
 const features = [
   {
     icon: ImagePlus,
-    title: "Gerar Fotos IA",
-    description: "Crie influenciadores digitais realistas em segundos com prompts simples.",
+    title: "Criação de Influenciadores",
+    description: "Gere influenciadores digitais ultra-realistas com prompts simples. Sem modelos, sem estúdio.",
   },
   {
     icon: Video,
-    title: "Foto para Vídeo",
-    description: "Transforme imagens estáticas em vídeos com movimentos naturais.",
+    title: "Vídeos Ultra-Realistas",
+    description: "Transforme imagens em vídeos com movimentos naturais para Reels, TikTok e Stories.",
+  },
+  {
+    icon: Move,
+    title: "Motion Control",
+    description: "Copie movimentos de qualquer vídeo de referência e aplique no seu personagem IA.",
   },
   {
     icon: ScanFace,
     title: "Troca de Rosto",
-    description: "Face swap profissional em fotos e vídeos com um clique.",
+    description: "Face swap profissional em fotos e vídeos com um clique. Resultado instantâneo.",
+  },
+  {
+    icon: BookOpen,
+    title: "Biblioteca de Prompts",
+    description: "Templates prontos por nicho: moda, fitness, beleza, finanças, tech e mais.",
   },
   {
     icon: Mic,
-    title: "Voz Realista",
-    description: "Gere vozes naturais em português, inglês, espanhol e árabe.",
+    title: "Áudio Realista",
+    description: "Vozes naturais em português, inglês, espanhol e árabe. Multilíngue.",
   },
   {
     icon: Maximize,
     title: "Upscale 4K",
-    description: "Aumente a resolução das suas imagens para qualidade ultra HD.",
+    description: "Aumente a resolução de qualquer imagem para qualidade ultra HD profissional.",
   },
   {
-    icon: Move,
-    title: "Motion Transfer",
-    description: "Copie movimentos de um vídeo de referência para seu personagem IA.",
+    icon: TrendingUp,
+    title: "Tendências Virais",
+    description: "Templates atualizados semanalmente com as tendências que estão bombando.",
+  },
+  {
+    icon: Wand2,
+    title: "Prompt Cloner",
+    description: "Envie qualquer imagem e a IA gera o prompt perfeito para reproduzi-la.",
   },
 ];
 
@@ -66,20 +91,57 @@ const steps = [
   },
 ];
 
-const plans = [
-  { name: "Grátis", credits: 5, price: "R$ 0", desc: "Para experimentar" },
-  { name: "Starter", credits: 50, price: "R$ 19,90", desc: "Para começar" },
+const competitors = [
+  { name: "Google Veo Ultra", price: "R$ 1.375" },
+  { name: "ChatGPT Pro", price: "R$ 1.100" },
+  { name: "Kling AI Pro", price: "R$ 200" },
+  { name: "Magnific AI", price: "R$ 540" },
+  { name: "ElevenLabs Pro", price: "R$ 540" },
+  { name: "Midjourney", price: "R$ 220" },
+];
+
+const faqs = [
   {
-    name: "Creator",
-    credits: 200,
-    price: "R$ 59,90",
-    desc: "Mais popular",
-    popular: true,
+    q: "O que é a PixelAI?",
+    a: "PixelAI é uma plataforma all-in-one que reúne as melhores ferramentas de IA para criação de conteúdo digital. Você pode gerar influenciadores digitais, vídeos, trocar rostos, criar vozes e muito mais — tudo em um só lugar.",
   },
-  { name: "Pro", credits: 500, price: "R$ 129,90", desc: "Para profissionais" },
+  {
+    q: "Preciso pagar para criar uma conta?",
+    a: "Não. Criar conta é 100% gratuito e você já recebe 5 créditos de boas-vindas para testar todas as ferramentas. Você só paga quando quiser comprar mais créditos.",
+  },
+  {
+    q: "O que posso fazer com os créditos?",
+    a: "Cada crédito permite uma geração. Por exemplo: 1 crédito = 1 imagem, 5 créditos = 1 vídeo, 2 créditos = 1 áudio, 1 crédito = 1 face swap ou upscale. Os créditos nunca expiram.",
+  },
+  {
+    q: "Tem assinatura mensal?",
+    a: "Não. A PixelAI funciona com pacotes de créditos avulsos. Você compra quando quiser e usa no seu ritmo, sem compromisso mensal.",
+  },
+  {
+    q: "Posso usar para criar conteúdo comercial?",
+    a: "Sim. Todo conteúdo gerado na PixelAI é seu para usar comercialmente — em anúncios, redes sociais, e-commerce ou qualquer outro fim.",
+  },
+  {
+    q: "Quais formas de pagamento aceita?",
+    a: "Aceitamos cartão de crédito, PIX e boleto bancário via Stripe, a plataforma de pagamentos mais segura do mundo.",
+  },
+  {
+    q: "Em quantos idiomas a IA gera vozes?",
+    a: "Atualmente geramos vozes em português, inglês, espanhol e árabe, com qualidade indistinguível de uma voz humana real.",
+  },
+  {
+    q: "O que acontece se a geração falhar?",
+    a: "Se uma geração falhar por erro da plataforma, seus créditos são devolvidos automaticamente. Sem risco.",
+  },
 ];
 
 export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const totalCompetitors = competitors.reduce(
+    (sum, c) => sum + parseInt(c.price.replace(/\D/g, "")),
+    0
+  );
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -90,15 +152,19 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTI0LDU4LDIzNywwLjA3KSIvPjwvc3ZnPg==')] opacity-40" />
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:py-40">
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300">
+              <Sparkles className="h-3.5 w-3.5" />
+              100% Inteligência Artificial
+            </div>
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Crie Influenciadores Digitais com IA{" "}
+              A Plataforma para Criar a Próxima Geração de{" "}
               <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
-                em Segundos
+                Influenciadores Digitais
               </span>
             </h1>
             <p className="mt-6 text-lg text-zinc-400 sm:text-xl">
               Sem estúdio, sem modelos, sem complicação. Gere fotos, vídeos e vozes
-              de influenciadores 100% criados por IA. A partir de R$ 19,90.
+              de influenciadores 100% criados por IA. Crie sua conta grátis.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
@@ -108,18 +174,60 @@ export default function HomePage() {
                 Começar Grátis
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-8 py-3.5 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-500 hover:text-white"
-              >
-                Ver Preços
-              </Link>
+            </div>
+            {/* Social proof */}
+            <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-8 w-8 rounded-full border-2 border-zinc-950 bg-gradient-to-br from-violet-400 to-purple-600"
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-zinc-400">
+                  <span className="font-semibold text-white">1.000+</span> criadores ativos
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <Shield className="h-4 w-4 text-violet-400" />
+                <span>5 créditos grátis ao criar conta</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* Results */}
+      <section className="border-t border-zinc-800/50 bg-zinc-950 py-20">
+        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <h2 className="text-3xl font-bold text-white">
+            100% inteligência artificial
+          </h2>
+          <p className="mt-3 text-zinc-400">
+            Sem fotos reais. Sem modelos. Sem estúdio. Tudo gerado por IA.
+          </p>
+          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[3/4] rounded-xl border border-zinc-800 bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center"
+              >
+                <div className="text-center">
+                  <Users className="mx-auto h-8 w-8 text-zinc-600" />
+                  <p className="mt-2 text-xs text-zinc-600">Influencer IA</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 text-sm text-zinc-500">
+            Crie sua conta grátis para ver exemplos reais de influenciadores gerados.
+          </p>
+        </div>
+      </section>
+
+      {/* Features — 9 cards */}
       <section className="border-t border-zinc-800/50 bg-zinc-950 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center">
@@ -127,7 +235,7 @@ export default function HomePage() {
               Tudo que você precisa em um só lugar
             </h2>
             <p className="mt-3 text-zinc-400">
-              6 ferramentas de IA integradas para criar conteúdo profissional.
+              9 ferramentas de IA integradas para criar conteúdo profissional.
             </p>
           </div>
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,7 +262,7 @@ export default function HomePage() {
       <section className="border-t border-zinc-800/50 bg-zinc-950/80 py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <h2 className="text-center text-3xl font-bold text-white">
-            Como funciona
+            Simples assim. 3 passos.
           </h2>
           <div className="mt-16 grid gap-12 md:grid-cols-3">
             {steps.map((s, i) => {
@@ -176,61 +284,107 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing preview */}
+      {/* Do the math */}
       <section className="border-t border-zinc-800/50 bg-zinc-950 py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white">
-              Preços acessíveis para todos
-            </h2>
+            <h2 className="text-3xl font-bold text-white">FAÇA AS CONTAS</h2>
             <p className="mt-3 text-zinc-400">
-              Comece grátis. Sem assinatura. Pague apenas pelo que usar.
+              Quanto você gastaria contratando cada ferramenta separadamente?
             </p>
           </div>
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {plans.map((p) => (
+          <div className="mt-12 space-y-3">
+            {competitors.map((c) => (
               <div
-                key={p.name}
-                className={`relative rounded-xl border p-6 transition-all ${
-                  p.popular
-                    ? "border-violet-500 bg-violet-600/10 shadow-lg shadow-violet-600/10"
-                    : "border-zinc-800 bg-zinc-900/30 hover:border-zinc-700"
-                }`}
+                key={c.name}
+                className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/30 px-6 py-4"
               >
-                {p.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-3 py-0.5 text-xs font-medium text-white">
-                    Mais Popular
+                <span className="text-sm font-medium text-zinc-300">{c.name}</span>
+                <span className="text-sm font-semibold text-zinc-400">{c.price}/mês</span>
+              </div>
+            ))}
+            <div className="flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/5 px-6 py-4">
+              <span className="text-sm font-bold text-red-400">Total por mês</span>
+              <span className="text-lg font-bold text-red-400">
+                R$ {totalCompetitors.toLocaleString("pt-BR")}/mês
+              </span>
+            </div>
+          </div>
+          <div className="mt-8 rounded-xl border border-violet-500/30 bg-violet-600/10 p-8 text-center">
+            <p className="text-lg font-semibold text-white">
+              A PixelAI não tem mensalidade.
+            </p>
+            <p className="mt-2 text-zinc-400">
+              Você compra pacotes de créditos e usa quando quiser. Sem compromisso.
+            </p>
+            <Link
+              href="/auth/register"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:bg-violet-500"
+            >
+              Criar Conta Grátis
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust */}
+      <section className="border-t border-zinc-800/50 bg-zinc-950/80 py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="grid gap-8 sm:grid-cols-3 text-center">
+            <div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600/15">
+                <Shield className="h-6 w-6 text-violet-400" />
+              </div>
+              <h3 className="font-semibold text-white">Pagamento Seguro</h3>
+              <p className="mt-1 text-sm text-zinc-400">Stripe, a plataforma mais segura do mundo</p>
+            </div>
+            <div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600/15">
+                <Clock className="h-6 w-6 text-violet-400" />
+              </div>
+              <h3 className="font-semibold text-white">Créditos sem Validade</h3>
+              <p className="mt-1 text-sm text-zinc-400">Use quando quiser, no seu ritmo</p>
+            </div>
+            <div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-600/15">
+                <Zap className="h-6 w-6 text-violet-400" />
+              </div>
+              <h3 className="font-semibold text-white">Geração Instantânea</h3>
+              <p className="mt-1 text-sm text-zinc-400">Resultados em segundos, não horas</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="border-t border-zinc-800/50 bg-zinc-950 py-24">
+        <div className="mx-auto max-w-2xl px-4 sm:px-6">
+          <h2 className="text-center text-3xl font-bold text-white">
+            Perguntas Frequentes
+          </h2>
+          <div className="mt-12 space-y-3">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-zinc-800 bg-zinc-900/30"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-white cursor-pointer"
+                >
+                  {faq.q}
+                  {openFaq === i ? (
+                    <ChevronUp className="h-4 w-4 shrink-0 text-zinc-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 shrink-0 text-zinc-400" />
+                  )}
+                </button>
+                {openFaq === i && (
+                  <div className="border-t border-zinc-800 px-6 py-4 text-sm text-zinc-400">
+                    {faq.a}
                   </div>
                 )}
-                <h3 className="text-lg font-semibold text-white">{p.name}</h3>
-                <p className="mt-1 text-sm text-zinc-500">{p.desc}</p>
-                <div className="mt-4">
-                  <span className="text-3xl font-bold text-white">{p.price}</span>
-                </div>
-                <p className="mt-2 text-sm text-zinc-400">
-                  {p.credits} créditos
-                </p>
-                <ul className="mt-4 space-y-2 text-sm text-zinc-400">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-violet-400" /> 1 crédito = 1 imagem
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-violet-400" /> 5 créditos = 1 vídeo
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-violet-400" /> Sem validade
-                  </li>
-                </ul>
-                <Link
-                  href="/auth/register"
-                  className={`mt-6 block rounded-lg py-2.5 text-center text-sm font-medium transition-colors ${
-                    p.popular
-                      ? "bg-violet-600 text-white hover:bg-violet-500"
-                      : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
-                  }`}
-                >
-                  {p.price === "R$ 0" ? "Criar Conta Grátis" : "Começar Agora"}
-                </Link>
               </div>
             ))}
           </div>
@@ -244,8 +398,8 @@ export default function HomePage() {
             Comece a criar agora
           </h2>
           <p className="mt-4 text-zinc-400">
-            Junte-se a milhares de criadores que já usam PixelAI para produzir
-            conteúdo profissional com inteligência artificial.
+            Crie sua conta grátis e receba 5 créditos para testar todas as ferramentas.
+            Sem cartão de crédito, sem compromisso.
           </p>
           <Link
             href="/auth/register"
